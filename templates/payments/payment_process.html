@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% load humanize %} {% block title %}Payment |
-Bloomify{% endblock %} {% block content %}
+Daisy Dreams{% endblock %} {% block content %}
 <div class="container mx-auto px-4 py-16">
   <div class="max-w-md mx-auto">
     <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
@@ -52,7 +52,7 @@ Bloomify{% endblock %} {% block content %}
     key: "{{ razorpay_key_id }}",
     amount: "{{ amount }}",
     currency: "{{ currency }}",
-    name: "Bloomify Flowers",
+    name: "Daisy Dreams Flowers",
     description: "Order #{{ order.order_id }}",
     image: "",
     order_id: "{{ razorpay_order_id }}",

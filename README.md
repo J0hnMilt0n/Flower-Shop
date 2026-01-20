@@ -1,4 +1,4 @@
-# Bloomify - Flower Shop E-commerce Website
+# Daisy Dreams - Flower Shop E-commerce Website
 
 A full-featured e-commerce website for a flower shop built with Django and Tailwind CSS. Similar to Flipkart/Shopify with all essential features.
 
@@ -186,4 +186,4 @@ MIT License
 
 ## Support
 
-For support, email support@bloomify.com or create an issue.
+For support, email support@Daisy Dreams.com or create an issue.
