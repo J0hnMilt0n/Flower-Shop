@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Order Confirmed | Bloomify{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-16">
+  <div class="max-w-2xl mx-auto text-center" data-aos="fade-up">
+    <div
+      class="bg-green-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6"
+    >
+      <i class="fas fa-check text-4xl text-green-600"></i>
+    </div>
+
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+      Order Placed Successfully! 🎉
+    </h1>
+    <p class="text-gray-600 mb-8">
+      Thank you for your order. We've sent a confirmation email to
+      <strong>{{ order.email }}</strong>
+    </p>
+
+    <!-- Order Details Card -->
+    <div
+      class="bg-white rounded-2xl shadow-lg p-8 text-left mb-8"
+      data-aos="fade-up"
+      data-aos-delay="100"
+    >
+      <div class="flex items-center justify-between mb-6 pb-6 border-b">
+        <div>
+          <span class="text-gray-500 text-sm">Order ID</span>
+          <h3 class="text-xl font-bold text-gray-800">{{ order.order_id }}</h3>
+        </div>
+        <div class="text-right">
+          <span class="text-gray-500 text-sm">Order Date</span>
+          <p class="font-medium">{{ order.created_at|date:"M d, Y" }}</p>
+        </div>
+      </div>
+
+      <!-- Order Items -->
+      <div class="space-y-4 mb-6">
+        {% for item in order.items.all %}
+        <div class="flex gap-4">
+          <div
+            class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0"
+          >
+            {% if item.product and item.product.image %}
+            <img
+              src="{{ item.product.image.url }}"
+              alt=""
+              class="w-full h-full object-cover"
+            />
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center">🌸</div>
+            {% endif %}
+          </div>
+          <div class="flex-1">
+            <h4 class="font-medium text-gray-800">{{ item.product_name }}</h4>
+            <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
+          </div>
+          <div class="text-right">
+            <span class="font-medium">₹{{ item.get_total|intcomma }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <hr class="mb-6" />
+
+      <!-- Delivery Details -->
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <h4 class="font-semibold text-gray-800 mb-2">Delivery Address</h4>
+          <p class="text-gray-600">
+            {{ order.full_name }}<br />
+            {{ order.address_line1 }}<br />
+            {% if order.address_line2 %}{{ order.address_line2 }}<br />{% endif %}
+            {{ order.city }}, {{ order.state }} - {{ order.pincode }}<br />
+            <i class="fas fa-phone mr-1"></i> {{ order.phone }}
+          </p>
+        </div>
+        <div>
+          <h4 class="font-semibold text-gray-800 mb-2">Delivery Details</h4>
+          <p class="text-gray-600">
+            <i class="far fa-calendar mr-1"></i> {{ order.delivery_date|date:"M d, Y" }}<br />
+            <i class="far fa-clock mr-1"></i> {{ order.delivery_time_slot }}<br />
+            <i class="fas fa-credit-card mr-1"></i> {{ order.get_payment_method_display }}
+          </p>
+        </div>
+      </div>
+
+      {% if order.special_instructions %}
+      <div class="bg-gray-50 p-4 rounded-lg mb-6">
+        <h4 class="font-semibold text-gray-800 mb-1">Special Instructions</h4>
+        <p class="text-gray-600">{{ order.special_instructions }}</p>
+      </div>
+      {% endif %}
+      {% if order.is_gift and order.gift_message %}
+      <div class="bg-pink-50 p-4 rounded-lg mb-6">
+        <h4 class="font-semibold text-gray-800 mb-1">🎁 Gift Message</h4>
+        <p class="text-gray-600 italic">"{{ order.gift_message }}"</p>
+      </div>
+      {% endif %}
+
+      <hr class="mb-6" />
+
+      <!-- Order Total -->
+      <div class="space-y-2">
+        <div class="flex justify-between text-gray-600">
+          <span>Subtotal</span>
+          <span>₹{{ order.subtotal|intcomma }}</span>
+        </div>
+        {% if order.discount > 0 %}
+        <div class="flex justify-between text-green-600">
+          <span>Discount</span>
+          <span>-₹{{ order.discount|intcomma }}</span>
+        </div>
+        {% endif %}
+        <div class="flex justify-between text-gray-600">
+          <span>Delivery</span>
+          <span
+            >{% if order.delivery_charge == 0 %}FREE{% else %}₹{{
+            order.delivery_charge|intcomma }}{% endif %}</span
+          >
+        </div>
+        <hr />
+        <div class="flex justify-between text-xl font-bold">
+          <span>Total</span>
+          <span class="text-primary-600">₹{{ order.total|intcomma }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap justify-center gap-4">
+      <a
+        href="{% url 'orders:track_order' order.order_id %}"
+        class="bg-primary-500 text-white px-8 py-3 rounded-full font-medium hover:bg-primary-600 transition"
+      >
+        <i class="fas fa-map-marker-alt mr-2"></i> Track Order
+      </a>
+      <a
+        href="{% url 'shop:home' %}"
+        class="bg-gray-100 text-gray-700 px-8 py-3 rounded-full font-medium hover:bg-gray-200 transition"
+      >
+        Continue Shopping
+      </a>
+    </div>
+
+    <!-- Help Text -->
+    <p class="text-gray-500 mt-8">
+      Need help?
+      <a href="#" class="text-primary-600 hover:underline">Contact Support</a>
+      or call us at
+      <a href="tel:+917373367802" class="text-primary-600">+91 7373367802</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

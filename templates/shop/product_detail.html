@@ -1,0 +1,612 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}{{ product.name }} | Bloomify{% endblock %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+  <!-- Breadcrumb -->
+  <nav class="text-sm mb-6">
+    <a href="{% url 'shop:home' %}" class="text-gray-500 hover:text-primary-600"
+      >Home</a
+    >
+    <span class="mx-2 text-gray-400">/</span>
+    <a
+      href="{% url 'shop:product_list' %}"
+      class="text-gray-500 hover:text-primary-600"
+      >Shop</a
+    >
+    <span class="mx-2 text-gray-400">/</span>
+    <a
+      href="{% url 'shop:product_list_by_category' product.category.slug %}"
+      class="text-gray-500 hover:text-primary-600"
+      >{{ product.category.name }}</a
+    >
+    <span class="mx-2 text-gray-400">/</span>
+    <span class="text-gray-800">{{ product.name }}</span>
+  </nav>
+
+  <div class="grid lg:grid-cols-2 gap-12">
+    <!-- Product Images -->
+    <div class="space-y-4" data-aos="fade-right">
+      <div class="bg-white rounded-2xl overflow-hidden shadow-sm">
+        {% if product.image %}
+        <img
+          src="{{ product.image.url }}"
+          alt="{{ product.name }}"
+          id="main-image"
+          class="w-full h-[500px] object-cover"
+        />
+        {% else %}
+        <div
+          class="w-full h-[500px] bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center"
+        >
+          <span class="text-9xl">🌸</span>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Thumbnail Images -->
+      {% if product.image_2 or product.image_3 or product.image_4 %}
+      <div class="grid grid-cols-4 gap-4">
+        <button
+          onclick="changeImage('{{ product.image.url }}')"
+          class="bg-white rounded-lg overflow-hidden border-2 border-primary-500 hover:border-primary-500 transition"
+        >
+          <img
+            src="{{ product.image.url }}"
+            alt=""
+            class="w-full h-24 object-cover"
+          />
+        </button>
+        {% if product.image_2 %}
+        <button
+          onclick="changeImage('{{ product.image_2.url }}')"
+          class="bg-white rounded-lg overflow-hidden border-2 border-transparent hover:border-primary-500 transition"
+        >
+          <img
+            src="{{ product.image_2.url }}"
+            alt=""
+            class="w-full h-24 object-cover"
+          />
+        </button>
+        {% endif %} {% if product.image_3 %}
+        <button
+          onclick="changeImage('{{ product.image_3.url }}')"
+          class="bg-white rounded-lg overflow-hidden border-2 border-transparent hover:border-primary-500 transition"
+        >
+          <img
+            src="{{ product.image_3.url }}"
+            alt=""
+            class="w-full h-24 object-cover"
+          />
+        </button>
+        {% endif %} {% if product.image_4 %}
+        <button
+          onclick="changeImage('{{ product.image_4.url }}')"
+          class="bg-white rounded-lg overflow-hidden border-2 border-transparent hover:border-primary-500 transition"
+        >
+          <img
+            src="{{ product.image_4.url }}"
+            alt=""
+            class="w-full h-24 object-cover"
+          />
+        </button>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Product Details -->
+    <div data-aos="fade-left">
+      <!-- Badges -->
+      <div class="flex gap-2 mb-4">
+        {% if product.is_bestseller %}
+        <span
+          class="bg-yellow-100 text-yellow-700 text-sm px-3 py-1 rounded-full"
+          >🔥 Bestseller</span
+        >
+        {% endif %} {% if product.is_new %}
+        <span class="bg-green-100 text-green-700 text-sm px-3 py-1 rounded-full"
+          >✨ New Arrival</span
+        >
+        {% endif %} {% if product.same_day_delivery %}
+        <span class="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full"
+          >🚚 Same Day Delivery</span
+        >
+        {% endif %}
+      </div>
+
+      <h1
+        class="font-display text-3xl md:text-4xl font-bold text-gray-800 mb-4"
+      >
+        {{ product.name }}
+      </h1>
+
+      <!-- Rating -->
+      <div class="flex items-center gap-2 mb-4">
+        <div class="flex items-center gap-1 text-yellow-400">
+          {% for i in "12345" %} {% if forloop.counter <= product.rating %}
+          <i class="fas fa-star"></i>
+          {% else %}
+          <i class="far fa-star text-gray-300"></i>
+          {% endif %} {% endfor %}
+        </div>
+        <span class="text-gray-500">({{ product.num_reviews }} reviews)</span>
+      </div>
+
+      <!-- Price -->
+      <div class="flex items-center gap-4 mb-6">
+        {% if product.discount_price %}
+        <span class="text-4xl font-bold text-primary-600"
+          >₹{{ product.discount_price|intcomma }}</span
+        >
+        <span class="text-2xl text-gray-400 line-through"
+          >₹{{ product.price|intcomma }}</span
+        >
+        <span
+          class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium"
+        >
+          {{ product.discount_percentage }}% OFF
+        </span>
+        {% else %}
+        <span class="text-4xl font-bold text-primary-600"
+          >₹{{ product.price|intcomma }}</span
+        >
+        {% endif %}
+      </div>
+
+      <!-- Stock Status -->
+      <div class="mb-6">
+        {% if product.in_stock %}
+        <span class="text-green-600">
+          <i class="fas fa-check-circle mr-1"></i> In Stock ({{ product.stock }} available)
+        </span>
+        {% else %}
+        <span class="text-red-600">
+          <i class="fas fa-times-circle mr-1"></i> Out of Stock
+        </span>
+        {% endif %}
+      </div>
+
+      <!-- Short Description -->
+      {% if product.short_description %}
+      <p class="text-gray-600 mb-6">{{ product.short_description }}</p>
+      {% endif %}
+
+      <!-- Size -->
+      <div class="mb-6">
+        <span class="font-medium text-gray-700">Size:</span>
+        <span
+          class="ml-2 bg-primary-100 text-primary-700 px-3 py-1 rounded-full"
+          >{{ product.get_size_display }}</span
+        >
+      </div>
+
+      <!-- Add to Cart Form -->
+      <form
+        action="{% url 'cart:cart_add' product.id %}"
+        method="POST"
+        class="mb-6"
+      >
+        {% csrf_token %}
+        <div class="flex items-center gap-4 mb-4">
+          <label class="font-medium text-gray-700">Quantity:</label>
+          <div class="flex items-center border rounded-lg">
+            <button
+              type="button"
+              onclick="decrementQty()"
+              class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition"
+            >
+              <i class="fas fa-minus"></i>
+            </button>
+            <input
+              type="number"
+              name="quantity"
+              id="quantity"
+              value="1"
+              min="1"
+              max="{{ product.stock }}"
+              class="w-16 text-center border-x py-2 focus:outline-none"
+            />
+            <button
+              type="button"
+              onclick="incrementQty({{ product.stock }})"
+              class="px-4 py-2 text-gray-600 hover:bg-gray-100 transition"
+            >
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button
+            type="submit"
+            {% if not product.in_stock %}disabled{% endif %}
+            class="flex-1 bg-primary-500 text-white py-4 rounded-full font-semibold hover:bg-primary-600 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+          >
+            <i class="fas fa-shopping-bag mr-2"></i>
+            Add to Cart
+          </button>
+          <a
+            href="{% url 'shop:add_to_wishlist' product.id %}"
+            class="p-4 border-2 border-gray-300 rounded-full hover:border-primary-500 hover:text-primary-500 transition {% if is_wishlisted %}text-primary-500 border-primary-500{% endif %}"
+          >
+            <i
+              class="{% if is_wishlisted %}fas{% else %}far{% endif %} fa-heart text-xl"
+            ></i>
+          </a>
+        </div>
+      </form>
+
+      <!-- Delivery Check -->
+      <div class="bg-gray-50 rounded-xl p-4 mb-6">
+        <div class="flex items-center gap-4">
+          <div class="flex-1">
+            <input
+              type="text"
+              id="pincode"
+              placeholder="Enter Pincode"
+              maxlength="6"
+              class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+            />
+          </div>
+          <button
+            onclick="checkDelivery()"
+            class="bg-gray-800 text-white px-6 py-2 rounded-lg hover:bg-gray-900 transition"
+          >
+            Check
+          </button>
+        </div>
+        <div id="delivery-result" class="mt-2 text-sm"></div>
+      </div>
+
+      <!-- Features -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="flex items-center gap-3 text-sm text-gray-600">
+          <i class="fas fa-truck text-primary-500"></i>
+          <span>{{ product.delivery_time }} delivery</span>
+        </div>
+        <div class="flex items-center gap-3 text-sm text-gray-600">
+          <i class="fas fa-sync text-primary-500"></i>
+          <span>Easy returns</span>
+        </div>
+        <div class="flex items-center gap-3 text-sm text-gray-600">
+          <i class="fas fa-shield-alt text-primary-500"></i>
+          <span>Secure payment</span>
+        </div>
+        <div class="flex items-center gap-3 text-sm text-gray-600">
+          <i class="fas fa-leaf text-primary-500"></i>
+          <span>100% fresh guarantee</span>
+        </div>
+      </div>
+
+      <!-- Share -->
+      <div class="flex items-center gap-4 pt-6 border-t">
+        <span class="text-gray-600">Share:</span>
+        <a href="#" class="text-blue-600 hover:text-blue-700"
+          ><i class="fab fa-facebook-f text-xl"></i
+        ></a>
+        <a href="#" class="text-pink-600 hover:text-pink-700"
+          ><i class="fab fa-instagram text-xl"></i
+        ></a>
+        <a href="#" class="text-sky-500 hover:text-sky-600"
+          ><i class="fab fa-twitter text-xl"></i
+        ></a>
+        <a href="#" class="text-green-500 hover:text-green-600"
+          ><i class="fab fa-whatsapp text-xl"></i
+        ></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Tabs -->
+  <div class="mt-16">
+    <div class="border-b">
+      <div class="flex gap-8">
+        <button
+          onclick="showTab('description')"
+          id="tab-description"
+          class="tab-btn py-4 px-2 border-b-2 border-primary-500 text-primary-600 font-medium"
+        >
+          Description
+        </button>
+        <button
+          onclick="showTab('contains')"
+          id="tab-contains"
+          class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-600 font-medium hover:text-primary-600"
+        >
+          What's Included
+        </button>
+        <button
+          onclick="showTab('care')"
+          id="tab-care"
+          class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-600 font-medium hover:text-primary-600"
+        >
+          Care Instructions
+        </button>
+        <button
+          onclick="showTab('reviews')"
+          id="tab-reviews"
+          class="tab-btn py-4 px-2 border-b-2 border-transparent text-gray-600 font-medium hover:text-primary-600"
+        >
+          Reviews ({{ product.num_reviews }})
+        </button>
+      </div>
+    </div>
+
+    <div class="py-8">
+      <!-- Description Tab -->
+      <div id="content-description" class="tab-content">
+        <div class="prose max-w-none text-gray-600">
+          {{ product.description|linebreaks }}
+        </div>
+      </div>
+
+      <!-- Contains Tab -->
+      <div id="content-contains" class="tab-content hidden">
+        <div class="prose max-w-none text-gray-600">
+          {% if product.contains %} {{ product.contains|linebreaks }} {% else %}
+          <p>Details not available</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Care Tab -->
+      <div id="content-care" class="tab-content hidden">
+        <div class="prose max-w-none text-gray-600">
+          {% if product.care_instructions %}
+          {{ product.care_instructions|linebreaks }}
+          {% else %}
+          <h3 class="font-semibold text-gray-800 mb-4">
+            General Flower Care Tips
+          </h3>
+          <ul class="list-disc list-inside space-y-2">
+            <li>Keep flowers in a cool location away from direct sunlight</li>
+            <li>Change water every 2-3 days</li>
+            <li>Trim stems at an angle when changing water</li>
+            <li>Remove wilted flowers and leaves</li>
+            <li>Keep away from fruits and vegetables</li>
+          </ul>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Reviews Tab -->
+      <div id="content-reviews" class="tab-content hidden">
+        <div class="space-y-6">
+          {% for review in reviews %}
+          <div class="bg-gray-50 rounded-xl p-6">
+            <div class="flex items-start justify-between mb-3">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold"
+                    >{{ review.user.get_full_name|default:review.user.username
+                    }}</span
+                  >
+                  {% if review.is_verified_purchase %}
+                  <span
+                    class="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full"
+                    >Verified Purchase</span
+                  >
+                  {% endif %}
+                </div>
+                <div
+                  class="flex items-center gap-1 text-yellow-400 text-sm mt-1"
+                >
+                  {% for i in "12345" %}
+                    {% if forloop.counter <= review.rating %}
+                  <i class="fas fa-star"></i>
+                    {% else %}
+                  <i class="far fa-star text-gray-300"></i>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+              <span class="text-sm text-gray-500"
+                >{{ review.created_at|date:"M d, Y" }}</span
+              >
+            </div>
+            <h4 class="font-medium text-gray-800 mb-2">{{ review.title }}</h4>
+            <p class="text-gray-600">{{ review.comment }}</p>
+          </div>
+          {% empty %}
+          <div class="text-center py-12">
+            <div class="text-5xl mb-4">💬</div>
+            <h3 class="text-xl font-semibold text-gray-800 mb-2">
+              No reviews yet
+            </h3>
+            <p class="text-gray-500">Be the first to review this product</p>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Add Review Form -->
+        {% if user.is_authenticated %}
+        <div class="mt-8 bg-white rounded-xl p-6 border">
+          <h3 class="font-semibold text-lg mb-4">Write a Review</h3>
+          <form action="{% url 'shop:add_review' product.id %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2">Rating</label>
+              <div class="flex gap-2">
+                {% for i in "12345" %}
+                <label class="cursor-pointer">
+                  <input type="radio" name="rating" value="{{ i }}"
+                  class="hidden peer" {% if forloop.counter == 5 %}checked{% endif %}>
+                  <i
+                    class="far fa-star text-2xl text-gray-300 peer-checked:text-yellow-400 peer-checked:fas hover:text-yellow-400"
+                  ></i>
+                </label>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2">Title</label>
+              <input
+                type="text"
+                name="title"
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+              />
+            </div>
+            <div class="mb-4">
+              <label class="block text-gray-700 mb-2">Your Review</label>
+              <textarea
+                name="comment"
+                rows="4"
+                required
+                class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+              ></textarea>
+            </div>
+            <button
+              type="submit"
+              class="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition"
+            >
+              Submit Review
+            </button>
+          </form>
+        </div>
+        {% else %}
+        <div class="mt-8 text-center py-8 bg-gray-50 rounded-xl">
+          <p class="text-gray-600 mb-4">Please login to write a review</p>
+          <a
+            href="{% url 'accounts:login' %}?next={{ request.path }}"
+            class="inline-block bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition"
+          >
+            Login
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  {% if related_products %}
+  <section class="mt-16">
+    <h2 class="font-display text-2xl font-bold text-gray-800 mb-8">
+      You May Also Like
+    </h2>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {% for product in related_products %}
+      <div
+        class="product-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group"
+      >
+        <div class="relative overflow-hidden">
+          <a href="{% url 'shop:product_detail' slug=product.slug %}">
+            {% if product.image %}
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name }}"
+              class="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-500"
+            />
+            {% else %}
+            <div
+              class="w-full h-48 bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center"
+            >
+              <span class="text-5xl">🌸</span>
+            </div>
+            {% endif %}
+          </a>
+        </div>
+        <div class="p-4">
+          <a
+            href="{% url 'shop:product_detail' slug=product.slug %}"
+            class="block"
+          >
+            <h3
+              class="font-semibold text-gray-800 mb-2 truncate hover:text-primary-600"
+            >
+              {{ product.name }}
+            </h3>
+          </a>
+          <div class="flex items-center gap-2">
+            {% if product.discount_price %}
+            <span class="text-lg font-bold text-primary-600"
+              >₹{{ product.discount_price|intcomma }}</span
+            >
+            <span class="text-sm text-gray-400 line-through"
+              >₹{{ product.price|intcomma }}</span
+            >
+            {% else %}
+            <span class="text-lg font-bold text-primary-600"
+              >₹{{ product.price|intcomma }}</span
+            >
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+
+{% endblock %} {% block extra_js %}
+<script>
+  function changeImage(src) {
+    document.getElementById("main-image").src = src;
+  }
+
+  function incrementQty(max) {
+    const input = document.getElementById("quantity");
+    if (parseInt(input.value) < max) {
+      input.value = parseInt(input.value) + 1;
+    }
+  }
+
+  function decrementQty() {
+    const input = document.getElementById("quantity");
+    if (parseInt(input.value) > 1) {
+      input.value = parseInt(input.value) - 1;
+    }
+  }
+
+  function showTab(tabName) {
+    // Hide all content
+    document
+      .querySelectorAll(".tab-content")
+      .forEach((el) => el.classList.add("hidden"));
+    // Remove active from all buttons
+    document.querySelectorAll(".tab-btn").forEach((el) => {
+      el.classList.remove("border-primary-500", "text-primary-600");
+      el.classList.add("border-transparent", "text-gray-600");
+    });
+
+    // Show selected content
+    document.getElementById("content-" + tabName).classList.remove("hidden");
+    // Activate button
+    const btn = document.getElementById("tab-" + tabName);
+    btn.classList.add("border-primary-500", "text-primary-600");
+    btn.classList.remove("border-transparent", "text-gray-600");
+  }
+
+  function checkDelivery() {
+    const pincode = document.getElementById("pincode").value;
+    const resultDiv = document.getElementById("delivery-result");
+
+    if (pincode.length !== 6) {
+      resultDiv.innerHTML =
+        '<span class="text-red-600">Please enter a valid 6-digit pincode</span>';
+      return;
+    }
+
+    fetch("/orders/check-pincode/?pincode=" + pincode)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.available) {
+          resultDiv.innerHTML =
+            '<span class="text-green-600"><i class="fas fa-check-circle mr-1"></i>' +
+            data.message +
+            " (" +
+            data.delivery_days +
+            ")</span>";
+        } else {
+          resultDiv.innerHTML =
+            '<span class="text-red-600"><i class="fas fa-times-circle mr-1"></i>' +
+            data.message +
+            "</span>";
+        }
+      });
+  }
+</script>
+{% endblock %}

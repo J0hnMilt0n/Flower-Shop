@@ -1,0 +1,8 @@
+Django
+Pillow
+django-crispy-forms
+crispy-tailwind
+razorpay
+python-dotenv
+stripe
+django-allauth

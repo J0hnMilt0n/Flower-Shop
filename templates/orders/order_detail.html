@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block title %}Order {{ order.order_id }} | Bloomify{% endblock %}
+{% block content %}
+<div class="bg-gradient-to-r from-primary-50 to-secondary-50 py-8">
+  <div class="container mx-auto px-4">
+    <nav class="text-sm mb-2">
+      <a
+        href="{% url 'accounts:order_history' %}"
+        class="text-gray-500 hover:text-primary-600"
+        >My Orders</a
+      >
+      <span class="mx-2 text-gray-400">/</span>
+      <span class="text-gray-800">{{ order.order_id }}</span>
+    </nav>
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800">
+      Order Details
+    </h1>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Order Details -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- Status Card -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <div class="flex items-center justify-between mb-6">
+          <div>
+            <span class="text-gray-500">Order ID</span>
+            <h2 class="text-xl font-bold">{{ order.order_id }}</h2>
+          </div>
+          <span
+            class="px-4 py-2 rounded-full text-sm font-medium {% if order.status == 'delivered' %}bg-green-100 text-green-700 {% elif order.status == 'cancelled' %}bg-red-100 text-red-700 {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700 {% else %}bg-blue-100 text-blue-700{% endif %}"
+          >
+            {{ order.get_status_display }}
+          </span>
+        </div>
+
+        <!-- Order Progress -->
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex-1 flex items-center">
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status != 'cancelled' %}bg-green-500 text-white{% else %}bg-gray-300{% endif %}"
+            >
+              <i class="fas fa-check text-sm"></i>
+            </div>
+            <div
+              class="flex-1 h-1 {% if order.status in 'confirmed,processing,out_for_delivery,delivered' %}bg-green-500{% else %}bg-gray-200{% endif %}"
+            ></div>
+          </div>
+          <div class="flex-1 flex items-center">
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'confirmed,processing,out_for_delivery,delivered' %}bg-green-500 text-white{% else %}bg-gray-300{% endif %}"
+            >
+              {% if order.status == 'confirmed' or order.status == 'processing' or order.status == 'out_for_delivery' or order.status == 'delivered' %}
+              <i class="fas fa-check text-sm"></i>
+              {% else %}2{% endif %}
+            </div>
+            <div
+              class="flex-1 h-1 {% if order.status in 'processing,out_for_delivery,delivered' %}bg-green-500{% else %}bg-gray-200{% endif %}"
+            ></div>
+          </div>
+          <div class="flex-1 flex items-center">
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status in 'out_for_delivery,delivered' %}bg-green-500 text-white{% else %}bg-gray-300{% endif %}"
+            >
+              {% if order.status == 'out_for_delivery' or order.status == 'delivered' %}
+              <i class="fas fa-check text-sm"></i>
+              {% else %}3{% endif %}
+            </div>
+            <div
+              class="flex-1 h-1 {% if order.status == 'delivered' %}bg-green-500{% else %}bg-gray-200{% endif %}"
+            ></div>
+          </div>
+          <div
+            class="w-8 h-8 rounded-full flex items-center justify-center {% if order.status == 'delivered' %}bg-green-500 text-white{% else %}bg-gray-300{% endif %}"
+          >
+            {% if order.status == 'delivered' %}
+            <i class="fas fa-check text-sm"></i>
+            {% else %}4{% endif %}
+          </div>
+        </div>
+        <div class="flex justify-between text-xs text-gray-500">
+          <span>Placed</span>
+          <span>Confirmed</span>
+          <span>Shipped</span>
+          <span>Delivered</span>
+        </div>
+      </div>
+
+      <!-- Order Items -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4">
+          Order Items ({{ order.items.count }})
+        </h3>
+        <div class="divide-y">
+          {% for item in order.items.all %}
+          <div class="py-4 flex gap-4">
+            <div
+              class="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0"
+            >
+              {% if item.product and item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt=""
+                class="w-full h-full object-cover"
+              />
+              {% else %}
+              <div
+                class="w-full h-full flex items-center justify-center text-2xl"
+              >
+                🌸
+              </div>
+              {% endif %}
+            </div>
+            <div class="flex-1">
+              <h4 class="font-medium text-gray-800">{{ item.product_name }}</h4>
+              <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
+              <p class="font-semibold text-primary-600 mt-1">
+                ₹{{ item.get_total|intcomma }}
+              </p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Delivery Address -->
+      <div class="bg-white rounded-xl shadow-sm p-6">
+        <h3 class="text-lg font-semibold mb-4">Delivery Address</h3>
+        <div class="text-gray-600">
+          <p class="font-medium text-gray-800">{{ order.full_name }}</p>
+          <p>{{ order.address_line1 }}</p>
+          {% if order.address_line2 %}
+          <p>{{ order.address_line2 }}</p>
+          {% endif %} {% if order.landmark %}
+          <p>{{ order.landmark }}</p>
+          {% endif %}
+          <p>{{ order.city }}, {{ order.state }} - {{ order.pincode }}</p>
+          <p class="mt-2"><i class="fas fa-phone mr-2"></i>{{ order.phone }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+        <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
+
+        <div class="space-y-3 text-gray-600">
+          <div class="flex justify-between">
+            <span>Order Date</span>
+            <span>{{ order.created_at|date:"M d, Y" }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Delivery Date</span>
+            <span>{{ order.delivery_date|date:"M d, Y" }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Time Slot</span>
+            <span>{{ order.delivery_time_slot }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Payment Method</span>
+            <span>{{ order.get_payment_method_display }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span>Payment Status</span>
+            <span
+              class="{% if order.payment_status == 'paid' %}text-green-600{% else %}text-yellow-600{% endif %}"
+            >
+              {{ order.get_payment_status_display }}
+            </span>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="space-y-2">
+          <div class="flex justify-between text-gray-600">
+            <span>Subtotal</span>
+            <span>₹{{ order.subtotal|intcomma }}</span>
+          </div>
+          {% if order.discount > 0 %}
+          <div class="flex justify-between text-green-600">
+            <span>Discount</span>
+            <span>-₹{{ order.discount|intcomma }}</span>
+          </div>
+          {% endif %}
+          <div class="flex justify-between text-gray-600">
+            <span>Delivery</span>
+            <span
+              >{% if order.delivery_charge == 0 %}FREE{% else %}₹{{
+              order.delivery_charge|intcomma }}{% endif %}</span
+            >
+          </div>
+          <hr />
+          <div class="flex justify-between text-xl font-bold">
+            <span>Total</span>
+            <span class="text-primary-600">₹{{ order.total|intcomma }}</span>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-3">
+          <a
+            href="{% url 'orders:track_order' order.order_id %}"
+            class="block w-full bg-primary-500 text-white text-center py-3 rounded-full font-medium hover:bg-primary-600 transition"
+          >
+            <i class="fas fa-map-marker-alt mr-2"></i> Track Order
+          </a>
+
+          {% if order.status in 'pending,confirmed' %}
+          <a
+            href="{% url 'orders:cancel_order' order.order_id %}"
+            class="block w-full bg-red-50 text-red-600 text-center py-3 rounded-full font-medium hover:bg-red-100 transition"
+            onclick="return confirm('Are you sure you want to cancel this order?')"
+          >
+            Cancel Order
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

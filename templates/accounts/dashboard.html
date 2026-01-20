@@ -1,0 +1,245 @@
+{% extends 'base.html' %} {% load humanize %} {% block title %}My Dashboard |
+Bloomify{% endblock %} {% block content %}
+<div class="bg-gradient-to-r from-primary-50 to-secondary-50 py-8">
+  <div class="container mx-auto px-4">
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800">
+      Hello, {{ user.first_name|default:user.username }}! 👋
+    </h1>
+    <p class="text-gray-600 mt-2">Welcome back to your dashboard</p>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+  <div class="grid lg:grid-cols-4 gap-8">
+    <!-- Sidebar -->
+    <aside class="lg:col-span-1">
+      <nav class="bg-white rounded-xl shadow-sm p-4 sticky top-24">
+        <ul class="space-y-1">
+          <li>
+            <a
+              href="{% url 'accounts:dashboard' %}"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary-50 text-primary-600 font-medium"
+            >
+              <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'accounts:order_history' %}"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50"
+            >
+              <i class="fas fa-box"></i> My Orders
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'accounts:wishlist' %}"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50"
+            >
+              <i class="fas fa-heart"></i> Wishlist
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'accounts:addresses' %}"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50"
+            >
+              <i class="fas fa-map-marker-alt"></i> Addresses
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'accounts:profile' %}"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50"
+            >
+              <i class="fas fa-user"></i> Profile
+            </a>
+          </li>
+          <li>
+            <a
+              href="{% url 'accounts:logout' %}"
+              class="flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50"
+            >
+              <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="lg:col-span-3">
+      <!-- Stats -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 text-center"
+          data-aos="fade-up"
+        >
+          <div class="text-3xl font-bold text-primary-600">
+            {{ total_orders }}
+          </div>
+          <div class="text-gray-500">Total Orders</div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 text-center"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          <div class="text-3xl font-bold text-primary-600">
+            {{ wishlist_count }}
+          </div>
+          <div class="text-gray-500">Wishlist Items</div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 text-center"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
+          <div class="text-3xl font-bold text-primary-600">
+            {{ addresses|length }}
+          </div>
+          <div class="text-gray-500">Addresses</div>
+        </div>
+        <div
+          class="bg-white rounded-xl shadow-sm p-6 text-center"
+          data-aos="fade-up"
+          data-aos-delay="300"
+        >
+          <div class="text-3xl font-bold text-green-600">🌸</div>
+          <div class="text-gray-500">Active</div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="bg-white rounded-xl shadow-sm p-6 mb-8" data-aos="fade-up">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold">Recent Orders</h2>
+          <a
+            href="{% url 'accounts:order_history' %}"
+            class="text-primary-600 hover:underline"
+            >View All</a
+          >
+        </div>
+
+        {% if recent_orders %}
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-4 py-3 text-left text-sm font-medium text-gray-600"
+                >
+                  Order ID
+                </th>
+                <th
+                  class="px-4 py-3 text-left text-sm font-medium text-gray-600"
+                >
+                  Date
+                </th>
+                <th
+                  class="px-4 py-3 text-left text-sm font-medium text-gray-600"
+                >
+                  Status
+                </th>
+                <th
+                  class="px-4 py-3 text-left text-sm font-medium text-gray-600"
+                >
+                  Total
+                </th>
+                <th
+                  class="px-4 py-3 text-left text-sm font-medium text-gray-600"
+                >
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              {% for order in recent_orders %}
+              <tr>
+                <td class="px-4 py-4 font-medium">{{ order.order_id }}</td>
+                <td class="px-4 py-4 text-gray-600">
+                  {{ order.created_at|date:"M d, Y" }}
+                </td>
+                <td class="px-4 py-4">
+                  <span
+                    class="px-2 py-1 text-xs rounded-full {% if order.status == 'delivered' %}bg-green-100 text-green-700 {% elif order.status == 'cancelled' %}bg-red-100 text-red-700 {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700 {% else %}bg-blue-100 text-blue-700{% endif %}"
+                  >
+                    {{ order.get_status_display }}
+                  </span>
+                </td>
+                <td class="px-4 py-4 font-medium">
+                  ₹{{ order.total|intcomma }}
+                </td>
+                <td class="px-4 py-4">
+                  <a
+                    href="{% url 'orders:order_detail' order.order_id %}"
+                    class="text-primary-600 hover:underline"
+                    >View</a
+                  >
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+          <div class="text-4xl mb-4">📦</div>
+          <p class="text-gray-500">No orders yet</p>
+          <a
+            href="{% url 'shop:product_list' %}"
+            class="text-primary-600 hover:underline mt-2 inline-block"
+          >
+            Start Shopping
+          </a>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Wishlist Preview -->
+      {% if wishlist_items %}
+      <div class="bg-white rounded-xl shadow-sm p-6" data-aos="fade-up">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-semibold">From Your Wishlist</h2>
+          <a
+            href="{% url 'accounts:wishlist' %}"
+            class="text-primary-600 hover:underline"
+            >View All</a
+          >
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {% for item in wishlist_items %}
+          <div class="bg-gray-50 rounded-lg overflow-hidden">
+            <a href="{% url 'shop:product_detail' slug=item.product.slug %}">
+              {% if item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt=""
+                class="w-full h-32 object-cover"
+              />
+              {% else %}
+              <div
+                class="w-full h-32 flex items-center justify-center text-3xl"
+              >
+                🌸
+              </div>
+              {% endif %}
+            </a>
+            <div class="p-3">
+              <h4 class="text-sm font-medium truncate">
+                {{ item.product.name }}
+              </h4>
+              <p class="text-primary-600 font-bold">
+                ₹{{ item.product.final_price|intcomma }}
+              </p>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+    </main>
+  </div>
+</div>
+{% endblock %}

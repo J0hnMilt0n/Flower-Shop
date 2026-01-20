@@ -1,0 +1,247 @@
+{% extends 'base.html' %} {% load humanize %} {% block title %}Shopping Cart |
+Bloomify{% endblock %} {% block content %}
+<div class="bg-gradient-to-r from-primary-50 to-secondary-50 py-8">
+  <div class="container mx-auto px-4">
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800">
+      Shopping Cart
+    </h1>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+  {% if cart|length > 0 %}
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Cart Items -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-6 border-b">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">
+              Cart Items ({{ cart|length }})
+            </h2>
+            <a
+              href="{% url 'cart:cart_clear' %}"
+              class="text-red-500 hover:text-red-600 text-sm"
+            >
+              <i class="fas fa-trash mr-1"></i> Clear Cart
+            </a>
+          </div>
+        </div>
+
+        <div class="divide-y">
+          {% for item in cart %}
+          <div class="p-6 flex gap-4" data-aos="fade-up">
+            <!-- Product Image -->
+            <div
+              class="w-24 h-24 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden"
+            >
+              {% if item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt="{{ item.product.name }}"
+                class="w-full h-full object-cover"
+              />
+              {% else %}
+              <div
+                class="w-full h-full flex items-center justify-center text-3xl"
+              >
+                🌸
+              </div>
+              {% endif %}
+            </div>
+
+            <!-- Product Details -->
+            <div class="flex-1">
+              <a
+                href="{% url 'shop:product_detail' slug=item.product.slug %}"
+                class="font-semibold text-gray-800 hover:text-primary-600"
+              >
+                {{ item.product.name }}
+              </a>
+              <p class="text-sm text-gray-500 mt-1">
+                Size: {{ item.product.get_size_display }}
+              </p>
+
+              <div class="flex items-center justify-between mt-4">
+                <!-- Quantity -->
+                <form
+                  action="{% url 'cart:cart_update' item.product.id %}"
+                  method="POST"
+                  class="flex items-center"
+                >
+                  {% csrf_token %}
+                  <div class="flex items-center border rounded-lg">
+                    <button
+                      type="submit"
+                      name="quantity"
+                      value="{{ item.quantity|add:'-1' }}"
+                      class="px-3 py-1 text-gray-600 hover:bg-gray-100"
+                    >
+                      <i class="fas fa-minus text-xs"></i>
+                    </button>
+                    <span class="px-4 py-1 border-x">{{ item.quantity }}</span>
+                    <button
+                      type="submit"
+                      name="quantity"
+                      value="{{ item.quantity|add:'1' }}"
+                      class="px-3 py-1 text-gray-600 hover:bg-gray-100"
+                    >
+                      <i class="fas fa-plus text-xs"></i>
+                    </button>
+                  </div>
+                </form>
+
+                <!-- Price & Remove -->
+                <div class="text-right">
+                  <div class="font-semibold text-primary-600">
+                    ₹{{ item.total_price|intcomma }}
+                  </div>
+                  <div class="text-sm text-gray-500">
+                    ₹{{ item.price|intcomma }} each
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Remove Button -->
+            <a
+              href="{% url 'cart:cart_remove' item.product.id %}"
+              class="text-gray-400 hover:text-red-500 p-2"
+            >
+              <i class="fas fa-times"></i>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-xl shadow-sm p-6 sticky top-24">
+        <h2 class="text-xl font-semibold mb-6">Order Summary</h2>
+
+        <!-- Coupon -->
+        <div class="mb-6">
+          {% if coupon %}
+          <div
+            class="flex items-center justify-between bg-green-50 p-3 rounded-lg mb-3"
+          >
+            <div>
+              <span class="text-green-600 font-medium">{{ coupon.code }}</span>
+              <span class="text-sm text-green-500 ml-2"
+                >{{ coupon.discount }}% off</span
+              >
+            </div>
+            <a
+              href="{% url 'cart:coupon_remove' %}"
+              class="text-red-500 text-sm hover:underline"
+              >Remove</a
+            >
+          </div>
+          {% else %}
+          <form action="{% url 'cart:coupon_apply' %}" method="POST">
+            {% csrf_token %}
+            <div class="flex gap-2">
+              {{ coupon_form.code }}
+              <button
+                type="submit"
+                class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-900 transition"
+              >
+                Apply
+              </button>
+            </div>
+          </form>
+          {% endif %}
+        </div>
+
+        <!-- Summary -->
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between text-gray-600">
+            <span>Subtotal ({{ cart|length }} items)</span>
+            <span>₹{{ cart.get_total_price|intcomma }}</span>
+          </div>
+          {% if coupon %}
+          <div class="flex justify-between text-green-600">
+            <span>Discount ({{ coupon.discount }}%)</span>
+            <span>-₹{{ cart.get_discount|intcomma }}</span>
+          </div>
+          {% endif %}
+          <div class="flex justify-between text-gray-600">
+            <span>Delivery</span>
+            <span
+              >{% if cart.get_total_price >= 500 %}<span class="text-green-600"
+                >FREE</span
+              >{% else %}₹50{% endif %}</span
+            >
+          </div>
+          <hr />
+          <div class="flex justify-between text-xl font-bold">
+            <span>Total</span>
+            <span class="text-primary-600">
+              {% if coupon %} ₹{{ cart.get_final_total|intcomma }} {% else %}
+              ₹{{ cart.get_total_price|intcomma }} {% endif %}
+            </span>
+          </div>
+        </div>
+
+        <!-- Checkout Button -->
+        <a
+          href="{% url 'orders:checkout' %}"
+          class="block w-full bg-primary-500 text-white text-center py-4 rounded-full font-semibold hover:bg-primary-600 transition"
+        >
+          Proceed to Checkout <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+
+        <a
+          href="{% url 'shop:product_list' %}"
+          class="block text-center text-gray-600 mt-4 hover:text-primary-600"
+        >
+          <i class="fas fa-arrow-left mr-1"></i> Continue Shopping
+        </a>
+
+        <!-- Trust Badges -->
+        <div class="mt-6 pt-6 border-t">
+          <div class="grid grid-cols-2 gap-4 text-sm text-gray-500">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-shield-alt text-green-500"></i>
+              <span>Secure Checkout</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i class="fas fa-leaf text-green-500"></i>
+              <span>Fresh Guaranteed</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i class="fas fa-undo text-green-500"></i>
+              <span>Easy Returns</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <i class="fas fa-truck text-green-500"></i>
+              <span>Fast Delivery</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <!-- Empty Cart -->
+  <div class="text-center py-20">
+    <div class="text-8xl mb-6">🛒</div>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+      Your cart is empty
+    </h2>
+    <p class="text-gray-500 mb-8">
+      Looks like you haven't added anything to your cart yet.
+    </p>
+    <a
+      href="{% url 'shop:product_list' %}"
+      class="inline-block bg-primary-500 text-white px-8 py-3 rounded-full font-medium hover:bg-primary-600 transition"
+    >
+      Start Shopping <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

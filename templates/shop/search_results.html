@@ -1,0 +1,121 @@
+{% extends 'base.html' %} {% load humanize %} {% block title %}Search Results |
+Bloomify{% endblock %} {% block content %}
+<div class="bg-gradient-to-r from-primary-50 to-secondary-50 py-8">
+  <div class="container mx-auto px-4">
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800">
+      Search Results
+    </h1>
+    <p class="text-gray-600 mt-2">
+      {% if query %} Found {{ total_results }} results for "<strong
+        >{{ query }}</strong
+      >" {% else %} Browse all products {% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+  {% if products %}
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+    {% for product in products %}
+    <div
+      class="product-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group"
+      data-aos="fade-up"
+    >
+      <div class="relative overflow-hidden">
+        <a href="{% url 'shop:product_detail' slug=product.slug %}">
+          {% if product.image %}
+          <img
+            src="{{ product.image.url }}"
+            alt="{{ product.name }}"
+            class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          {% else %}
+          <div
+            class="w-full h-64 bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center"
+          >
+            <span class="text-6xl">🌸</span>
+          </div>
+          {% endif %}
+        </a>
+      </div>
+
+      <div class="p-4">
+        <a
+          href="{% url 'shop:product_detail' slug=product.slug %}"
+          class="block"
+        >
+          <h3
+            class="font-semibold text-gray-800 mb-2 truncate hover:text-primary-600"
+          >
+            {{ product.name }}
+          </h3>
+        </a>
+        <div class="flex items-center gap-2">
+          {% if product.discount_price %}
+          <span class="text-xl font-bold text-primary-600"
+            >₹{{ product.discount_price|intcomma }}</span
+          >
+          <span class="text-sm text-gray-400 line-through"
+            >₹{{ product.price|intcomma }}</span
+          >
+          {% else %}
+          <span class="text-xl font-bold text-primary-600"
+            >₹{{ product.price|intcomma }}</span
+          >
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if products.has_other_pages %}
+  <div class="flex justify-center mt-12">
+    <nav class="flex items-center gap-2">
+      {% if products.has_previous %}
+      <a
+        href="?q={{ query }}&page={{ products.previous_page_number }}"
+        class="px-4 py-2 bg-white rounded-lg hover:bg-primary-50 transition"
+      >
+        <i class="fas fa-chevron-left"></i>
+      </a>
+      {% endif %} {% for num in products.paginator.page_range %} {% if
+      products.number == num %}
+      <span class="px-4 py-2 bg-primary-500 text-white rounded-lg"
+        >{{ num }}</span
+      >
+      {% elif num > products.number|add:'-3' and num < products.number|add:'3'
+      %}
+      <a
+        href="?q={{ query }}&page={{ num }}"
+        class="px-4 py-2 bg-white rounded-lg hover:bg-primary-50 transition"
+        >{{ num }}</a
+      >
+      {% endif %} {% endfor %} {% if products.has_next %}
+      <a
+        href="?q={{ query }}&page={{ products.next_page_number }}"
+        class="px-4 py-2 bg-white rounded-lg hover:bg-primary-50 transition"
+      >
+        <i class="fas fa-chevron-right"></i>
+      </a>
+      {% endif %}
+    </nav>
+  </div>
+  {% endif %} {% else %}
+  <div class="text-center py-20">
+    <div class="text-8xl mb-6">🔍</div>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">No products found</h2>
+    <p class="text-gray-500 mb-8">
+      Try a different search term or browse our categories
+    </p>
+    <a
+      href="{% url 'shop:product_list' %}"
+      class="inline-block bg-primary-500 text-white px-8 py-3 rounded-full font-medium hover:bg-primary-600 transition"
+    >
+      Browse All Products
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

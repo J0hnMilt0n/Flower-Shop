@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block title %}My Orders | Bloomify{% endblock %}
+{% block content %}
+<div class="bg-gradient-to-r from-primary-50 to-secondary-50 py-8">
+  <div class="container mx-auto px-4">
+    <h1 class="font-display text-3xl md:text-4xl font-bold text-gray-800">
+      My Orders
+    </h1>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 py-8">
+  {% if orders %}
+  <div class="space-y-4">
+    {% for order in orders %}
+    <div
+      class="bg-white rounded-xl shadow-sm overflow-hidden"
+      data-aos="fade-up"
+    >
+      <div
+        class="p-6 border-b bg-gray-50 flex flex-wrap items-center justify-between gap-4"
+      >
+        <div class="flex items-center gap-6">
+          <div>
+            <span class="text-gray-500 text-sm">Order ID</span>
+            <p class="font-semibold">{{ order.order_id }}</p>
+          </div>
+          <div>
+            <span class="text-gray-500 text-sm">Date</span>
+            <p class="font-medium">{{ order.created_at|date:"M d, Y" }}</p>
+          </div>
+          <div>
+            <span class="text-gray-500 text-sm">Total</span>
+            <p class="font-bold text-primary-600">₹{{ order.total }}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <span
+            class="px-3 py-1 text-sm rounded-full {% if order.status == 'delivered' %}bg-green-100 text-green-700 {% elif order.status == 'cancelled' %}bg-red-100 text-red-700 {% elif order.status == 'pending' %}bg-yellow-100 text-yellow-700 {% else %}bg-blue-100 text-blue-700{% endif %}"
+          >
+            {{ order.get_status_display }}
+          </span>
+          <a
+            href="{% url 'orders:order_detail' order.order_id %}"
+            class="text-primary-600 hover:underline"
+            >View Details</a
+          >
+        </div>
+      </div>
+
+      <div class="p-6">
+        <div class="flex flex-wrap gap-4">
+          {% for item in order.items.all|slice:":3" %}
+          <div class="flex items-center gap-3">
+            <div
+              class="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0"
+            >
+              {% if item.product and item.product.image %}
+              <img
+                src="{{ item.product.image.url }}"
+                alt=""
+                class="w-full h-full object-cover"
+              />
+              {% else %}
+              <div class="w-full h-full flex items-center justify-center">
+                🌸
+              </div>
+              {% endif %}
+            </div>
+            <div>
+              <p class="font-medium text-gray-800">
+                {{ item.product_name|truncatewords:5 }}
+              </p>
+              <p class="text-sm text-gray-500">Qty: {{ item.quantity }}</p>
+            </div>
+          </div>
+          {% endfor %} {% if order.items.count > 3 %}
+          <div class="flex items-center text-gray-500">
+            +{{ order.items.count|add:"-3" }} more items
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-20">
+    <div class="text-8xl mb-6">📦</div>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">No orders yet</h2>
+    <p class="text-gray-500 mb-8">Start shopping to see your orders here</p>
+    <a
+      href="{% url 'shop:product_list' %}"
+      class="inline-block bg-primary-500 text-white px-8 py-3 rounded-full font-medium hover:bg-primary-600 transition"
+    >
+      Start Shopping <i class="fas fa-arrow-right ml-2"></i>
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

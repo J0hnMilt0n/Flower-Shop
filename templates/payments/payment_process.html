@@ -1,0 +1,89 @@
+{% extends 'base.html' %} {% load humanize %} {% block title %}Payment |
+Bloomify{% endblock %} {% block content %}
+<div class="container mx-auto px-4 py-16">
+  <div class="max-w-md mx-auto">
+    <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+      <div class="mb-6">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Razorpay_logo.svg/200px-Razorpay_logo.svg.png"
+          alt="Razorpay"
+          class="h-8 mx-auto mb-4"
+        />
+        <h2 class="font-display text-2xl font-bold text-gray-800">
+          Complete Payment
+        </h2>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="bg-gray-50 rounded-xl p-4 mb-6 text-left">
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">Order ID</span>
+          <span class="font-medium">{{ order.order_id }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">Amount</span>
+          <span class="text-xl font-bold text-primary-600"
+            >₹{{ order.total|intcomma }}</span
+          >
+        </div>
+      </div>
+
+      <!-- Payment Button -->
+      <button
+        id="pay-btn"
+        class="w-full bg-blue-600 text-white py-4 rounded-full font-semibold hover:bg-blue-700 transition flex items-center justify-center gap-2"
+      >
+        <i class="fas fa-lock"></i>
+        Pay ₹{{ order.total|intcomma }}
+      </button>
+
+      <p class="text-sm text-gray-500 mt-4">
+        <i class="fas fa-shield-alt text-green-500 mr-1"></i>
+        Payments are secured by Razorpay
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Razorpay SDK -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  var options = {
+    key: "{{ razorpay_key_id }}",
+    amount: "{{ amount }}",
+    currency: "{{ currency }}",
+    name: "Bloomify Flowers",
+    description: "Order #{{ order.order_id }}",
+    image: "",
+    order_id: "{{ razorpay_order_id }}",
+    callback_url: "{{ callback_url }}",
+    prefill: {
+      name: "{{ order.full_name }}",
+      email: "{{ order.email }}",
+      contact: "{{ order.phone }}",
+    },
+    theme: {
+      color: "#ec4899",
+    },
+    modal: {
+      ondismiss: function () {
+        window.location.href = "{% url 'payments:payment_failed' %}";
+      },
+    },
+  };
+
+  var rzp = new Razorpay(options);
+
+  document.getElementById("pay-btn").onclick = function (e) {
+    rzp.open();
+    e.preventDefault();
+  };
+
+  // Auto-open payment modal
+  window.onload = function () {
+    setTimeout(function () {
+      rzp.open();
+    }, 500);
+  };
+</script>
+{% endblock %}

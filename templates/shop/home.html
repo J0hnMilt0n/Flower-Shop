@@ -1,0 +1,699 @@
+{% extends 'base.html' %} {% load humanize %} {% block title %}Bloomify -
+Premium Flower Shop | Same Day Delivery{% endblock %} {% block content %}
+<!-- Hero Section with Slider -->
+<section class="relative gradient-bg overflow-hidden">
+  <div class="container mx-auto px-4 py-16 md:py-24">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div data-aos="fade-right">
+        <span
+          class="inline-block bg-primary-100 text-primary-600 px-4 py-1 rounded-full text-sm font-medium mb-4"
+        >
+          🌷 Free Delivery on Orders Above ₹500
+        </span>
+        <h1
+          class="font-display text-4xl md:text-6xl font-bold text-gray-800 mb-6"
+        >
+          Beautiful Flowers for Every
+          <span class="text-primary-600">Occasion</span>
+        </h1>
+        <p class="text-lg text-gray-600 mb-8">
+          From romantic roses to elegant orchids, find the perfect bouquet to
+          express your emotions. Same-day delivery available across major
+          cities.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a
+            href="{% url 'shop:product_list' %}"
+            class="bg-primary-500 text-white px-8 py-3 rounded-full font-medium hover:bg-primary-600 transition hover-lift"
+          >
+            Shop Now <i class="fas fa-arrow-right ml-2"></i>
+          </a>
+          <a
+            href="{% url 'shop:products_by_occasion' occasion='marriage' %}"
+            class="bg-white text-primary-600 px-8 py-3 rounded-full font-medium border-2 border-primary-500 hover:bg-primary-50 transition"
+          >
+            Wedding Flowers
+          </a>
+        </div>
+
+        <!-- Trust Badges -->
+        <div class="flex items-center gap-8 mt-12">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-primary-600">10K+</div>
+            <div class="text-sm text-gray-500">Happy Customers</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-primary-600">4.9★</div>
+            <div class="text-sm text-gray-500">Rating</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-primary-600">50+</div>
+            <div class="text-sm text-gray-500">Cities</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="relative" data-aos="fade-left">
+        <div class="relative z-10">
+          <img
+            src="https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=600&h=700&fit=crop"
+            alt="Beautiful Flowers"
+            class="rounded-2xl shadow-2xl w-full object-cover"
+          />
+        </div>
+        <div
+          class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg z-20"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
+          <div class="flex items-center gap-3">
+            <div class="bg-green-100 p-3 rounded-full">
+              <i class="fas fa-truck text-green-600"></i>
+            </div>
+            <div>
+              <div class="font-semibold">Same Day Delivery</div>
+              <div class="text-sm text-gray-500">Order before 2 PM</div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="absolute -top-4 -right-4 bg-white p-4 rounded-xl shadow-lg z-20"
+          data-aos="fade-up"
+          data-aos-delay="300"
+        >
+          <div class="flex items-center gap-3">
+            <div class="bg-yellow-100 p-3 rounded-full">
+              <i class="fas fa-star text-yellow-500"></i>
+            </div>
+            <div>
+              <div class="font-semibold">4.9 Rating</div>
+              <div class="text-sm text-gray-500">10K+ Reviews</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decorative Elements -->
+  <div class="absolute top-20 left-10 text-6xl opacity-20 animate-bounce">
+    🌸
+  </div>
+  <div class="absolute bottom-20 right-10 text-6xl opacity-20 animate-pulse">
+    🌺
+  </div>
+</section>
+
+<!-- Shop by Occasion -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12" data-aos="fade-up">
+      <span class="text-primary-600 font-medium">Find the Perfect Gift</span>
+      <h2
+        class="font-display text-3xl md:text-4xl font-bold text-gray-800 mt-2"
+      >
+        Shop by Occasion
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {% for occasion in occasions %}
+      <a
+        href="{% url 'shop:products_by_occasion' occasion=occasion.slug %}"
+        class="group bg-gradient-to-br from-primary-50 to-secondary-50 p-6 rounded-2xl text-center hover-lift"
+        data-aos="fade-up"
+        data-aos-delay="{{ forloop.counter0|add:'1'|stringformat:'d' }}00"
+      >
+        <div class="text-5xl mb-4 group-hover:scale-110 transition-transform">
+          {{ occasion.icon }}
+        </div>
+        <h3 class="font-semibold text-gray-800">{{ occasion.name }}</h3>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Featured Products -->
+{% if featured_products %}
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center mb-12" data-aos="fade-up">
+      <div>
+        <span class="text-primary-600 font-medium">Handpicked for You</span>
+        <h2
+          class="font-display text-3xl md:text-4xl font-bold text-gray-800 mt-2"
+        >
+          Featured Products
+        </h2>
+      </div>
+      <a
+        href="{% url 'shop:product_list' %}"
+        class="text-primary-600 font-medium hover:text-primary-700"
+      >
+        View All <i class="fas fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {% for product in featured_products %}
+      <div
+        class="product-card bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition group"
+        data-aos="fade-up"
+        data-aos-delay="{{ forloop.counter0|add:'1'|stringformat:'d' }}00"
+      >
+        <div class="relative overflow-hidden">
+          {% if product.image %}
+          <img
+            src="{{ product.image.url }}"
+            alt="{{ product.name }}"
+            class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          {% else %}
+          <div
+            class="w-full h-64 bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center"
+          >
+            <span class="text-6xl">🌸</span>
+          </div>
+          {% endif %}
+
+          <!-- Badges -->
+          <div class="absolute top-3 left-3 flex flex-col gap-2">
+            {% if product.is_new %}
+            <span class="bg-green-500 text-white text-xs px-2 py-1 rounded-full"
+              >NEW</span
+            >
+            {% endif %} {% if product.is_on_sale %}
+            <span class="bg-red-500 text-white text-xs px-2 py-1 rounded-full"
+              >-{{ product.discount_percentage }}%</span
+            >
+            {% endif %}
+          </div>
+
+          <!-- Quick Actions Overlay -->
+          <div
+            class="product-overlay absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-3"
+          >
+            <a
+              href="{% url 'shop:product_detail' slug=product.slug %}"
+              class="bg-white p-3 rounded-full hover:bg-primary-500 hover:text-white transition"
+            >
+              <i class="fas fa-eye"></i>
+            </a>
+            <form
+              action="{% url 'cart:cart_add' product.id %}"
+              method="POST"
+              class="inline"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1" />
+              <button
+                type="submit"
+                class="bg-white p-3 rounded-full hover:bg-primary-500 hover:text-white transition"
+              >
+                <i class="fas fa-shopping-bag"></i>
+              </button>
+            </form>
+            <a
+              href="{% url 'shop:add_to_wishlist' product.id %}"
+              class="bg-white p-3 rounded-full hover:bg-primary-500 hover:text-white transition"
+            >
+              <i class="fas fa-heart"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <h3 class="font-semibold text-gray-800 mb-1 truncate">
+            {{ product.name }}
+          </h3>
+          <div class="flex items-center gap-1 text-yellow-400 text-sm mb-2">
+            {% for i in "12345" %} {% if forloop.counter <= product.rating %}
+            <i class="fas fa-star"></i>
+            {% else %}
+            <i class="far fa-star text-gray-300"></i>
+            {% endif %} {% endfor %}
+            <span class="text-gray-500 ml-1">({{ product.num_reviews }})</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              {% if product.discount_price %}
+              <span class="text-xl font-bold text-primary-600"
+                >₹{{ product.discount_price|intcomma }}</span
+              >
+              <span class="text-sm text-gray-400 line-through"
+                >₹{{ product.price|intcomma }}</span
+              >
+              {% else %}
+              <span class="text-xl font-bold text-primary-600"
+                >₹{{ product.price|intcomma }}</span
+              >
+              {% endif %}
+            </div>
+            {% if product.same_day_delivery %}
+            <span class="text-xs text-green-600"
+              ><i class="fas fa-truck"></i
+            ></span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Banner Section -->
+<section
+  class="py-16 bg-gradient-to-r from-primary-600 to-primary-700 text-white"
+>
+  <div class="container mx-auto px-4">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div data-aos="fade-right">
+        <span
+          class="inline-block bg-white bg-opacity-20 px-4 py-1 rounded-full text-sm mb-4"
+        >
+          💒 Wedding Collection
+        </span>
+        <h2 class="font-display text-3xl md:text-5xl font-bold mb-4">
+          Make Your Wedding Day Unforgettable
+        </h2>
+        <p class="text-primary-100 mb-6">
+          From bridal bouquets to venue decorations, we create magical floral
+          arrangements that make your special day even more beautiful.
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <a
+            href="{% url 'shop:products_by_occasion' occasion='marriage' %}"
+            class="bg-white text-primary-600 px-6 py-3 rounded-full font-medium hover:bg-primary-50 transition"
+          >
+            Explore Wedding Flowers
+          </a>
+          <a
+            href="#"
+            class="text-white border-2 border-white px-6 py-3 rounded-full font-medium hover:bg-white hover:text-primary-600 transition"
+          >
+            Book Consultation
+          </a>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4" data-aos="fade-left">
+        <img
+          src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=300&h=400&fit=crop"
+          alt="Wedding Bouquet"
+          class="rounded-2xl shadow-lg"
+        />
+        <img
+          src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=300&h=300&fit=crop"
+          alt="Wedding Decoration"
+          class="rounded-2xl shadow-lg mt-8"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Bestsellers -->
+{% if bestsellers %}
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="flex justify-between items-center mb-12" data-aos="fade-up">
+      <div>
+        <span class="text-primary-600 font-medium">Most Loved</span>
+        <h2
+          class="font-display text-3xl md:text-4xl font-bold text-gray-800 mt-2"
+        >
+          Bestsellers
+        </h2>
+      </div>
+      <a
+        href="{% url 'shop:product_list' %}?sort=bestseller"
+        class="text-primary-600 font-medium hover:text-primary-700"
+      >
+        View All <i class="fas fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {% for product in bestsellers %}
+      <div
+        class="product-card bg-white rounded-2xl overflow-hidden border border-gray-100 hover:shadow-xl transition group"
+        data-aos="fade-up"
+      >
+        <div class="relative overflow-hidden">
+          {% if product.image %}
+          <img
+            src="{{ product.image.url }}"
+            alt="{{ product.name }}"
+            class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+          />
+          {% else %}
+          <div
+            class="w-full h-64 bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center"
+          >
+            <span class="text-6xl">🌹</span>
+          </div>
+          {% endif %}
+
+          <span
+            class="absolute top-3 left-3 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full"
+          >
+            🔥 BESTSELLER
+          </span>
+
+          <div
+            class="product-overlay absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-3"
+          >
+            <a
+              href="{% url 'shop:product_detail' slug=product.slug %}"
+              class="bg-white p-3 rounded-full hover:bg-primary-500 hover:text-white transition"
+            >
+              <i class="fas fa-eye"></i>
+            </a>
+            <form
+              action="{% url 'cart:cart_add' product.id %}"
+              method="POST"
+              class="inline"
+            >
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1" />
+              <button
+                type="submit"
+                class="bg-white p-3 rounded-full hover:bg-primary-500 hover:text-white transition"
+              >
+                <i class="fas fa-shopping-bag"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <h3 class="font-semibold text-gray-800 mb-1 truncate">
+            {{ product.name }}
+          </h3>
+          <div class="flex items-center gap-1 text-yellow-400 text-sm mb-2">
+            {% for i in "12345" %} {% if forloop.counter <= product.rating %}
+            <i class="fas fa-star"></i>
+            {% else %}
+            <i class="far fa-star text-gray-300"></i>
+            {% endif %} {% endfor %}
+            <span class="text-gray-500 ml-1">({{ product.num_reviews }})</span>
+          </div>
+          <div class="flex items-center gap-2">
+            {% if product.discount_price %}
+            <span class="text-xl font-bold text-primary-600"
+              >₹{{ product.discount_price|intcomma }}</span
+            >
+            <span class="text-sm text-gray-400 line-through"
+              >₹{{ product.price|intcomma }}</span
+            >
+            {% else %}
+            <span class="text-xl font-bold text-primary-600"
+              >₹{{ product.price|intcomma }}</span
+            >
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- Features Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <div class="text-center" data-aos="fade-up">
+        <div
+          class="bg-primary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-truck text-2xl text-primary-600"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Free Delivery</h3>
+        <p class="text-gray-500 text-sm">On orders above ₹500</p>
+      </div>
+      <div class="text-center" data-aos="fade-up" data-aos-delay="100">
+        <div
+          class="bg-secondary-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-clock text-2xl text-secondary-600"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Same Day Delivery</h3>
+        <p class="text-gray-500 text-sm">Order before 2 PM</p>
+      </div>
+      <div class="text-center" data-aos="fade-up" data-aos-delay="200">
+        <div
+          class="bg-yellow-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-leaf text-2xl text-yellow-600"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Fresh Flowers</h3>
+        <p class="text-gray-500 text-sm">100% freshness guaranteed</p>
+      </div>
+      <div class="text-center" data-aos="fade-up" data-aos-delay="300">
+        <div
+          class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fas fa-shield-alt text-2xl text-blue-600"></i>
+        </div>
+        <h3 class="font-semibold text-gray-800 mb-2">Secure Payment</h3>
+        <p class="text-gray-500 text-sm">100% secure checkout</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="py-16 bg-white">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12" data-aos="fade-up">
+      <span class="text-primary-600 font-medium">Customer Love</span>
+      <h2
+        class="font-display text-3xl md:text-4xl font-bold text-gray-800 mt-2"
+      >
+        What Our Customers Say
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-gray-50 p-6 rounded-2xl" data-aos="fade-up">
+        <div class="flex items-center gap-1 text-yellow-400 mb-4">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="text-gray-600 mb-4">
+          "The flowers were absolutely stunning! They arrived fresh and
+          beautifully arranged. My wife loved them. Will definitely order
+          again!"
+        </p>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-12 h-12 bg-primary-200 rounded-full flex items-center justify-center"
+          >
+            <span class="font-bold text-primary-600">RS</span>
+          </div>
+          <div>
+            <div class="font-semibold">Rahul Sharma</div>
+            <div class="text-sm text-gray-500">Mumbai</div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-gray-50 p-6 rounded-2xl"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        <div class="flex items-center gap-1 text-yellow-400 mb-4">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="text-gray-600 mb-4">
+          "Ordered wedding decorations from Bloomify. They exceeded all
+          expectations! The team was professional and the arrangements were
+          breathtaking."
+        </p>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-12 h-12 bg-secondary-200 rounded-full flex items-center justify-center"
+          >
+            <span class="font-bold text-secondary-600">PK</span>
+          </div>
+          <div>
+            <div class="font-semibold">Priya Kapoor</div>
+            <div class="text-sm text-gray-500">Delhi</div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="bg-gray-50 p-6 rounded-2xl"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        <div class="flex items-center gap-1 text-yellow-400 mb-4">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="text-gray-600 mb-4">
+          "Same-day delivery saved my anniversary! The orchids were gorgeous and
+          lasted for weeks. Great quality and excellent service."
+        </p>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-12 h-12 bg-yellow-200 rounded-full flex items-center justify-center"
+          >
+            <span class="font-bold text-yellow-600">AM</span>
+          </div>
+          <div>
+            <div class="font-semibold">Amit Mehta</div>
+            <div class="text-sm text-gray-500">Bangalore</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Instagram Section -->
+<section class="py-16 bg-gray-50">
+  <div class="container mx-auto px-4">
+    <div class="text-center mb-12" data-aos="fade-up">
+      <span class="text-primary-600 font-medium">@bloomify_flowers</span>
+      <h2
+        class="font-display text-3xl md:text-4xl font-bold text-gray-800 mt-2"
+      >
+        Follow Us on Instagram
+      </h2>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+      <a
+        href="#"
+        class="relative group overflow-hidden rounded-lg"
+        data-aos="fade-up"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=200&h=200&fit=crop"
+          alt="Instagram"
+          class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div
+          class="absolute inset-0 bg-primary-600 bg-opacity-0 group-hover:bg-opacity-60 transition flex items-center justify-center"
+        >
+          <i
+            class="fab fa-instagram text-white text-2xl opacity-0 group-hover:opacity-100 transition"
+          ></i>
+        </div>
+      </a>
+      <a
+        href="#"
+        class="relative group overflow-hidden rounded-lg"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=200&h=200&fit=crop"
+          alt="Instagram"
+          class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div
+          class="absolute inset-0 bg-primary-600 bg-opacity-0 group-hover:bg-opacity-60 transition flex items-center justify-center"
+        >
+          <i
+            class="fab fa-instagram text-white text-2xl opacity-0 group-hover:opacity-100 transition"
+          ></i>
+        </div>
+      </a>
+      <a
+        href="#"
+        class="relative group overflow-hidden rounded-lg"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1518882605630-8eb256240e17?w=200&h=200&fit=crop"
+          alt="Instagram"
+          class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div
+          class="absolute inset-0 bg-primary-600 bg-opacity-0 group-hover:bg-opacity-60 transition flex items-center justify-center"
+        >
+          <i
+            class="fab fa-instagram text-white text-2xl opacity-0 group-hover:opacity-100 transition"
+          ></i>
+        </div>
+      </a>
+      <a
+        href="#"
+        class="relative group overflow-hidden rounded-lg"
+        data-aos="fade-up"
+        data-aos-delay="300"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1487530811176-3780de880c2d?w=200&h=200&fit=crop"
+          alt="Instagram"
+          class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div
+          class="absolute inset-0 bg-primary-600 bg-opacity-0 group-hover:bg-opacity-60 transition flex items-center justify-center"
+        >
+          <i
+            class="fab fa-instagram text-white text-2xl opacity-0 group-hover:opacity-100 transition"
+          ></i>
+        </div>
+      </a>
+      <a
+        href="#"
+        class="relative group overflow-hidden rounded-lg"
+        data-aos="fade-up"
+        data-aos-delay="400"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1469259943454-aa100abba749?w=200&h=200&fit=crop"
+          alt="Instagram"
+          class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div
+          class="absolute inset-0 bg-primary-600 bg-opacity-0 group-hover:bg-opacity-60 transition flex items-center justify-center"
+        >
+          <i
+            class="fab fa-instagram text-white text-2xl opacity-0 group-hover:opacity-100 transition"
+          ></i>
+        </div>
+      </a>
+      <a
+        href="#"
+        class="relative group overflow-hidden rounded-lg"
+        data-aos="fade-up"
+        data-aos-delay="500"
+      >
+        <img
+          src="https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=200&h=200&fit=crop"
+          alt="Instagram"
+          class="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
+        />
+        <div
+          class="absolute inset-0 bg-primary-600 bg-opacity-0 group-hover:bg-opacity-60 transition flex items-center justify-center"
+        >
+          <i
+            class="fab fa-instagram text-white text-2xl opacity-0 group-hover:opacity-100 transition"
+          ></i>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+{% endblock %}
