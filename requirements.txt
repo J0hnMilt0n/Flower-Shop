@@ -7,3 +7,4 @@ python-dotenv
 stripe
 django-allauth
 gunicorn
+psycopg2-binary
