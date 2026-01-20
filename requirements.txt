@@ -6,3 +6,4 @@ razorpay
 python-dotenv
 stripe
 django-allauth
+gunicorn
