@@ -6,4 +6,3 @@ razorpay
 python-dotenv
 stripe
 django-allauth
-encodings
