@@ -106,6 +106,14 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #db2777;
       }
+      /* Hide scrollbar for mobile category icons */
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     </style>
 
     {% block extra_css %}{% endblock %}
@@ -114,7 +122,7 @@
     <!-- Top Bar -->
     <div class="bg-primary-600 text-white py-2 text-sm">
       <div class="container mx-auto px-4 flex justify-between items-center">
-        <div class="flex items-center space-x-4">
+        <div class="flex items-center space-x-4 mr-2">
           <span
             ><i class="fas fa-truck mr-1"></i> Free Delivery on orders over
             ₹500</span
@@ -377,6 +385,61 @@
         <i class="fas fa-bars text-xl"></i>
       </button>
     </header>
+
+    <!-- Mobile Category Icons - Horizontal Scroll -->
+    <div class="md:hidden bg-white border-b border-gray-200 sticky top-[72px] z-40 shadow-sm">
+      <div class="overflow-x-auto scrollbar-hide">
+        <div class="flex gap-2 px-4 py-3 min-w-max">
+          <a href="{% url 'shop:products_by_occasion' occasion='marriage' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">💒</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Wedding</span>
+          </a>
+          
+          <a href="{% url 'shop:products_by_occasion' occasion='birthday' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">🎂</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Birthday</span>
+          </a>
+          
+          <a href="{% url 'shop:products_by_occasion' occasion='anniversary' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">💕</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Anniversary</span>
+          </a>
+          
+          <a href="{% url 'shop:products_by_occasion' occasion='valentines' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">❤️</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Valentine's</span>
+          </a>
+          
+          <a href="{% url 'shop:products_by_occasion' occasion='congratulations' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">🎉</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Congrats</span>
+          </a>
+          
+          <a href="{% url 'shop:products_by_occasion' occasion='get_well' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">💐</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Get Well</span>
+          </a>
+          
+          <a href="{% url 'shop:products_by_occasion' occasion='corporate' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">🏢</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Corporate</span>
+          </a>
+          
+          <a href="{% url 'shop:products_by_occasion' occasion='festival' %}" 
+             class="flex flex-col items-center justify-center min-w-[70px] p-2 rounded-lg hover:bg-primary-50 transition-colors group">
+            <span class="text-2xl mb-1">🎊</span>
+            <span class="text-[10px] text-gray-600 group-hover:text-primary-600 font-medium text-center leading-tight">Festival</span>
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- Messages -->
     {% if messages %}
