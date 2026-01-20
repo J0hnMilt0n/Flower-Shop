@@ -1,4 +1,4 @@
-Django
+django>=4.2
 Pillow
 django-crispy-forms
 crispy-tailwind
