@@ -177,6 +177,7 @@
               </div>
             </label>
 
+            {% if enable_cod %}
             <label
               class="flex items-center p-4 border-2 rounded-xl cursor-pointer hover:border-primary-300 has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50"
             >
@@ -193,6 +194,16 @@
                 </p>
               </div>
             </label>
+            {% else %}
+            <div class="p-4 border-2 border-gray-200 rounded-xl bg-gray-50">
+              <div class="ml-4">
+                <span class="font-medium text-gray-400">Cash on Delivery (COD)</span>
+                <p class="text-sm text-gray-500 mt-1">
+                  Currently not available
+                </p>
+              </div>
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>

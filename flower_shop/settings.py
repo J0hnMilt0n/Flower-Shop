@@ -143,3 +143,6 @@ STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', 'sk_test_xxxxxxxxxxxx')
 # Email Settings (for order confirmations)
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'noreply@flowershop.com'
+
+# Payment Options
+ENABLE_COD = os.getenv('ENABLE_COD', 'True') == 'True'  # Set to False to disable Cash on Delivery

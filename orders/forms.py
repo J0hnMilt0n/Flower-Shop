@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from .models import Address, Order
 
 
@@ -119,6 +120,15 @@ class CheckoutForm(forms.Form):
         })
     )
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, enable_cod=True, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['address'].queryset = Address.objects.filter(user=user)
+        
+        # Filter payment methods based on enable_cod parameter
+        if not enable_cod:
+            # Remove COD from choices
+            choices = [choice for choice in Order.PAYMENT_METHOD_CHOICES if choice[0] != 'cod']
+            self.fields['payment_method'].choices = choices
+            # Set default to first available option
+            if choices:
+                self.fields['payment_method'].initial = choices[0][0]

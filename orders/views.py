@@ -8,6 +8,7 @@ from django.conf import settings
 
 from cart.cart import Cart
 from cart.models import Coupon
+from shop.models import SiteSettings
 from .models import Address, Order, OrderItem, OrderTracking
 from .forms import AddressForm, CheckoutForm
 
@@ -16,6 +17,7 @@ from .forms import AddressForm, CheckoutForm
 def checkout(request):
     """Checkout page"""
     cart = Cart(request)
+    site_settings = SiteSettings.load()
     
     if len(cart) == 0:
         messages.warning(request, 'Your cart is empty!')
@@ -33,8 +35,14 @@ def checkout(request):
             pass
     
     if request.method == 'POST':
-        form = CheckoutForm(request.user, request.POST)
+        form = CheckoutForm(request.user, site_settings.enable_cod, request.POST)
         if form.is_valid():
+            # Validate COD is enabled if selected
+            payment_method = form.cleaned_data.get('payment_method', 'razorpay')
+            if payment_method == 'cod' and not site_settings.enable_cod:
+                messages.error(request, 'Cash on Delivery is currently not available.')
+                return redirect('orders:checkout')
+            
             address = form.cleaned_data['address']
             
             # Calculate totals
@@ -122,7 +130,7 @@ def checkout(request):
                         field_name = field.replace('_', ' ').title()
                     messages.error(request, f'{field_name}: {error}')
     else:
-        form = CheckoutForm(request.user)
+        form = CheckoutForm(request.user, site_settings.enable_cod)
     
     context = {
         'cart': cart,
@@ -130,6 +138,7 @@ def checkout(request):
         'form': form,
         'coupon': coupon,
         'address_form': AddressForm(),
+        'enable_cod': site_settings.enable_cod,
     }
     return render(request, 'orders/checkout.html', context)
 

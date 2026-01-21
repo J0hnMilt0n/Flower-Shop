@@ -199,3 +199,82 @@ class Banner(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class SiteSettings(models.Model):
+    """Site-wide settings that can be managed from admin"""
+    # Payment Settings
+    enable_cod = models.BooleanField(
+        default=True,
+        verbose_name='Enable Cash on Delivery',
+        help_text='Allow customers to pay with Cash on Delivery'
+    )
+    
+    # Delivery Settings
+    free_delivery_threshold = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=500,
+        verbose_name='Free Delivery Above',
+        help_text='Minimum order value for free delivery'
+    )
+    standard_delivery_charge = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=50,
+        verbose_name='Standard Delivery Charge',
+        help_text='Delivery charge for orders below threshold'
+    )
+    
+    # Store Settings
+    store_open = models.BooleanField(
+        default=True,
+        verbose_name='Store Open',
+        help_text='Set to False to temporarily close the store for new orders'
+    )
+    maintenance_mode = models.BooleanField(
+        default=False,
+        verbose_name='Maintenance Mode',
+        help_text='Enable maintenance mode to display a maintenance message'
+    )
+    maintenance_message = models.TextField(
+        blank=True,
+        default='We are currently under maintenance. Please check back soon!',
+        verbose_name='Maintenance Message'
+    )
+    
+    # Contact & Social
+    contact_email = models.EmailField(blank=True)
+    contact_phone = models.CharField(max_length=20, blank=True)
+    whatsapp_number = models.CharField(max_length=20, blank=True)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+    updated_by = models.ForeignKey(
+        'auth.User',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='settings_updates'
+    )
+
+    class Meta:
+        verbose_name = 'Site Settings'
+        verbose_name_plural = 'Site Settings'
+
+    def __str__(self):
+        return 'Site Settings'
+    
+    def save(self, *args, **kwargs):
+        # Ensure only one instance exists
+        self.pk = 1
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        # Prevent deletion
+        pass
+    
+    @classmethod
+    def load(cls):
+        """Load the site settings, create if doesn't exist"""
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj

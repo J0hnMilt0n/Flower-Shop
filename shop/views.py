@@ -8,7 +8,7 @@ from django.db.models import Q, Avg
 from django.core.paginator import Paginator
 from django.utils import timezone
 
-from .models import Category, Product, ProductReview, Wishlist, Banner, FlowerType
+from .models import Category, Product, ProductReview, Wishlist, Banner, FlowerType, SiteSettings
 from .forms import ProductForm, CategoryForm, FlowerTypeForm
 from orders.models import Order, OrderTracking
 
@@ -625,3 +625,31 @@ def order_add_tracking(request, order_id):
             messages.success(request, 'Tracking entry added successfully!')
     
     return redirect('shop:order_detail_manage', order_id=order_id)
+
+
+@staff_member_required
+def settings_management(request):
+    """Site settings management"""
+    settings = SiteSettings.load()
+    
+    if request.method == 'POST':
+        # Update settings
+        settings.enable_cod = request.POST.get('enable_cod') == 'on'
+        settings.free_delivery_threshold = request.POST.get('free_delivery_threshold', 500)
+        settings.standard_delivery_charge = request.POST.get('standard_delivery_charge', 50)
+        settings.store_open = request.POST.get('store_open') == 'on'
+        settings.maintenance_mode = request.POST.get('maintenance_mode') == 'on'
+        settings.maintenance_message = request.POST.get('maintenance_message', '')
+        settings.contact_email = request.POST.get('contact_email', '')
+        settings.contact_phone = request.POST.get('contact_phone', '')
+        settings.whatsapp_number = request.POST.get('whatsapp_number', '')
+        settings.updated_by = request.user
+        settings.save()
+        
+        messages.success(request, 'Settings updated successfully!')
+        return redirect('shop:settings_management')
+    
+    context = {
+        'settings': settings,
+    }
+    return render(request, 'shop/manage/settings.html', context)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, FlowerType, Product, ProductReview, Wishlist, Banner
+from .models import Category, FlowerType, Product, ProductReview, Wishlist, Banner, SiteSettings
 
 
 @admin.register(Category)
@@ -76,3 +76,38 @@ class BannerAdmin(admin.ModelAdmin):
     list_display = ['title', 'is_active', 'order', 'created_at']
     list_editable = ['is_active', 'order']
     list_filter = ['is_active']
+
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        # Prevent adding more than one instance
+        return not SiteSettings.objects.exists()
+    
+    def has_delete_permission(self, request, obj=None):
+        # Prevent deletion
+        return False
+    
+    fieldsets = (
+        ('Payment Settings', {
+            'fields': ('enable_cod',),
+            'description': 'Configure payment options for customers'
+        }),
+        ('Delivery Settings', {
+            'fields': ('free_delivery_threshold', 'standard_delivery_charge'),
+            'description': 'Configure delivery charges and thresholds'
+        }),
+        ('Store Status', {
+            'fields': ('store_open', 'maintenance_mode', 'maintenance_message'),
+            'description': 'Control store availability'
+        }),
+        ('Contact Information', {
+            'fields': ('contact_email', 'contact_phone', 'whatsapp_number'),
+            'description': 'Store contact details',
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def save_model(self, request, obj, form, change):
+        obj.updated_by = request.user
+        super().save_model(request, obj, form, change)

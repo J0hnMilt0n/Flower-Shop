@@ -31,4 +31,7 @@ urlpatterns = [
     path('manage/orders/<str:order_id>/', views.order_detail_manage, name='order_detail_manage'),
     path('manage/orders/<str:order_id>/update-status/', views.order_update_status, name='order_update_status'),
     path('manage/orders/<str:order_id>/add-tracking/', views.order_add_tracking, name='order_add_tracking'),
+    
+    # Settings Management
+    path('manage/settings/', views.settings_management, name='settings_management'),
 ]

@@ -83,10 +83,14 @@
                class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
                 <i class="fas fa-leaf mr-2 text-gray-600"></i> Manage Flower Types
             </a>
-            <a href="/admin/" target="_blank"
-               class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
-                <i class="fas fa-cog mr-2 text-gray-600"></i> Django Admin
+            <a href="{% url 'shop:settings_management' %}" 
+               class="flex items-center px-4 py-2 bg-primary-100 hover:bg-primary-200 text-primary-700 rounded-lg transition">
+                <i class="fas fa-cog mr-2"></i> Site Settings
             </a>
+            <!-- <a href="/admin/" target="_blank"
+               class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition">
+                <i class="fas fa-tools mr-2 text-gray-600"></i> Django Admin
+            </a> -->
         </div>
     </div>
     

@@ -100,7 +100,7 @@ class Command(BaseCommand):
                 'flower_types': ['gerberas', 'carnations', 'mixed-flowers'],
                 'stock': 100,
                 'is_bestseller': True,
-                'is_new_arrival': True,
+                'is_new': True,
             },
             {
                 'name': 'Sunflower Sunshine',
@@ -163,7 +163,7 @@ class Command(BaseCommand):
                 'flower_types': ['roses'],
                 'stock': 75,
                 'is_featured': True,
-                'is_new_arrival': True,
+                'is_new': True,
             },
             
             # Get Well Soon
@@ -228,15 +228,15 @@ class Command(BaseCommand):
                 'title': 'Wedding Season Sale',
                 'subtitle': 'Up to 30% off on wedding flowers',
                 'button_text': 'Shop Wedding',
-                'button_link': '/products/?occasion=marriage',
-                'position': 1,
+                'link': '/products/?occasion=marriage',
+                'order': 1,
             },
             {
                 'title': 'Fresh Roses Daily',
                 'subtitle': 'Farm-fresh roses delivered to your doorstep',
                 'button_text': 'Order Now',
-                'button_link': '/products/',
-                'position': 2,
+                'link': '/products/',
+                'order': 2,
             },
         ]
         
