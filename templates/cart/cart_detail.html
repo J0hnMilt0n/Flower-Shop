@@ -52,12 +52,18 @@ Daisy Dreams{% endblock %} {% block content %}
 
             <!-- Product Details -->
             <div class="flex-1">
+              {% if item.product.slug %}
               <a
                 href="{% url 'shop:product_detail' slug=item.product.slug %}"
                 class="font-semibold text-gray-800 hover:text-primary-600"
               >
                 {{ item.product.name }}
               </a>
+              {% else %}
+              <span class="font-semibold text-gray-800">
+                {{ item.product.name }}
+              </span>
+              {% endif %}
               <p class="text-sm text-gray-500 mt-1">
                 Size: {{ item.product.get_size_display }}
               </p>
