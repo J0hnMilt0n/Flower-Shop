@@ -30,6 +30,7 @@ Daisy Dreams{% endblock %} {% block content %}
 
         <div class="divide-y">
           {% for item in cart %}
+          {% if item.product and item.product.id %}
           <div class="p-6 flex gap-4" data-aos="fade-up">
             <!-- Product Image -->
             <div
@@ -117,6 +118,7 @@ Daisy Dreams{% endblock %} {% block content %}
               <i class="fas fa-times"></i>
             </a>
           </div>
+          {% endif %}
           {% endfor %}
         </div>
       </div>

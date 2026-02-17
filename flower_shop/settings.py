@@ -73,23 +73,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'flower_shop.wsgi.application'
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'koyebdb',
-        'USER': 'koyeb-adm',
-        'PASSWORD': 'npg_NCH1AXdQwyx5',
-        'HOST': 'ep-young-hall-ags3g8we.c-2.eu-central-1.pg.koyeb.app',
-        'OPTIONS': {'sslmode': 'require'},
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'koyebdb',
+#         'USER': 'koyeb-adm',
+#         'PASSWORD': 'npg_NCH1AXdQwyx5',
+#         'HOST': 'ep-young-hall-ags3g8we.c-2.eu-central-1.pg.koyeb.app',
+#         'OPTIONS': {'sslmode': 'require'},
+#     }
+# }
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
